@@ -337,19 +337,32 @@ void PrintUsage() {
     std::cout << "##        ##       ##        ##     ##    ##    ##    ## ##     ## ##       ##    ##  \n";
     std::cout << "##        ######## ##        ##     ##    ##     ######  ##     ## ######## ##     ## \n";
     std::cout << "\n";
-    std::cout <<
+    std::cout << 
         "Usage: PePatcher <Replacement-Filepath> <Input-Filepath> <Output-Filepath>\n\n"
         "Replacement.rf Format:\n"
         "  @<Address1>;<Address2>;...:<Replacement-String-Length>:<Replacement-String>\n"
-        "    - Replaces <Replacement-String> at the specified <Address1>, <Address2>, etc.\n\n"
+        "    - Replaces <Replacement-String> at the specified addresses.\n\n"
         "  ^<Address1>;<Address2>;...:<Replacement-String-Length>:<Replacement-String>\n"
-        "    - Replaces <Replacement-String> at the specified <Address1>, <Address2>, etc. Allows \\0 like operators!\n\n"
+        "    - Replaces <Replacement-String> at the specified addresses.\n"
+        "      Allows escape sequences (e.g., \\0, \\t, \\n).\n\n"
         "  &<Address1>;<Address2>;...:<Replacement-String-Length>:<Replacement-String>\n"
-        "    - Replaces <Replacement-String> at the specified <Address1>, <Address2>, etc.\n\n"
+        "    - Similar to '@', but treats replacement differently (check the logic).\n\n"
         "  #<Address>:<Replacement-Limit>:<Replacement-String-Length>:<Replacement-String>\n"
-        "    - Replaces <Replacement-String> at the specified <Address> up to <Replacement-Limit> times.\n\n"
+        "    - Replaces <Replacement-String> at a single address, up to <Replacement-Limit> times.\n"
+        "      Each replacement occurs sequentially after the last replacement.\n\n"
         "  $<Address1>;<Address2>;...:<Replacement-String-Length>:<Replacement-String>\n"
-        "    - Inserts <Replacement-String> at the specified <Address1>, <Address2>, etc.\n";
+        "    - Inserts <Replacement-String> at the specified addresses.\n\n"
+        "Example:\n"
+        "  @0x1000;0x2000:4:abcd\n"
+        "    - Replace 4 bytes starting at addresses 0x1000 and 0x2000 with 'abcd'.\n\n"
+        "  ^0x3000:3:\\0\\tA\n"
+        "    - Replace 3 bytes at address 0x3000 with null, tab, and 'A'.\n\n"
+        "  &0x4000:5:12345\n"
+        "    - Replace 5 bytes at address 0x4000 with '12345'.\n\n"
+        "  #0x5000:10:2:xy\n"
+        "    - Replace 2 bytes with 'xy' at address 0x5000, repeated 10 times sequentially.\n\n"
+        "  $0x6000:3:def\n"
+        "    - Insert 3 bytes 'def' at address 0x6000.\n";
 }
 
 int main(int argc, char **argv) {
